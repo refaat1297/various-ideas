@@ -16,12 +16,14 @@
     }
   })
 
+  const emit = defineEmits(['delete-file'])
+
   function getFileSize (size) {
     return +(size * 0.000001).toFixed(3)
   }
 
   function deleteFile (id) {
-    console.log('deleteFile', id)
+    emit('delete-file', id)
   }
 
 
@@ -36,7 +38,7 @@
 
     <template v-else v-for="file in files" :key="file.id">
       <div  class="file">
-        <img :src="png" width="50" :alt="file.name">
+        <img :src="png" width="45" :alt="file.name">
         <div class="details">
           <div class="content">
             <a :href="file.url" target="_blank" class="information">
@@ -58,14 +60,21 @@
 .files-list {
   width: 100%;
   margin-top: 30px;
+  height: auto;
+  max-height: 250px;
+  overflow-y: scroll;
 
   .file {
     display: grid;
-    grid-template-columns: 50px 1fr;
+    grid-template-columns: 45px 1fr;
     align-items: center;
     gap: 10px;
     width: 100%;
-    margin-top: 30px;
+    padding: 20px 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba(#95afc0, .4);
+    }
 
     .details {
       .content {
@@ -80,15 +89,16 @@
           flex-direction: column;
           text-decoration: none;
           color: #000;
+          outline: none;
 
           .name {
             font-family: MediumFont, sans-serif;
-            font-size: 1rem;
+            font-size: .9rem;
           }
 
           .size {
             font-family: MediumFont, sans-serif;
-            font-size: .8rem;
+            font-size: .7rem;
             color: #95afc0;
             font-weight: bold;
           }
@@ -100,6 +110,8 @@
           svg {
             fill: #3a6591;
             cursor: pointer;
+            width: 25px;
+            height: 25px;
           }
         }
       }
