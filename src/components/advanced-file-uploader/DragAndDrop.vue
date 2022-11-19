@@ -12,78 +12,6 @@ import image from './assets/image.png'
 
   const emit = defineEmits(['upload-files'])
 
-
-  // let task = ref({})
-
-
-  // function upload (event) {
-  //   hasError.value = false
-  //   errMsg.value = ''
-  //
-  //   files.value = [...event.dataTransfer.files]
-  //
-  //
-  //   if (files.value.length > 5) {
-  //     hasError.value = true
-  //     errMsg.value = 'Max selected files is 4 :('
-  //   }
-  //
-  //
-  //   files.value.forEach(file => {
-  //
-  //     const size = +(file.size * 0.000001).toFixed(3)
-  //
-  //
-  //     if (size > 4) {
-  //       hasError.value = true
-  //       errMsg.value = 'Please select a file less than 4 MB :('
-  //       return
-  //     }
-  //
-  //
-  //     const advancedImageUploaderRef = storageRef(storage, `advanced-image-uploader/${file.name}`)
-  //     const task = uploadBytesResumable(advancedImageUploaderRef, file)
-  //
-  //     const upload = {
-  //       task,
-  //       currentProgress: 0,
-  //       name: file.name,
-  //       error: ''
-  //     }
-  //
-  //     const uploadIndex = uploads.value.push(upload) - 1
-  //
-  //     task.on('state_changed', (snapshot) => {
-  //
-  //       const { totalBytes, bytesTransferred } = snapshot
-  //       uploads.value[uploadIndex].currentProgress = (bytesTransferred / totalBytes) * 100
-  //
-  //     },(error) => {
-  //
-  //       uploads.value[uploadIndex].error = error
-  //
-  //     }, () => {
-  //
-  //       uploads.value[uploadIndex].error = ''
-  //
-  //     })
-  //
-  //   })
-  //
-  // }
-
-
-  // watch(uploads, () => {
-  //
-  //
-  //   console.log('uploads', uploads.value)
-  //
-  //
-  // }, {
-  //   deep: true,
-  //   immediate: true
-  // })
-
   function upload (event) {
     isDragged.value = false
     hasError.value = false
@@ -110,8 +38,6 @@ import image from './assets/image.png'
       errMsg.value = ''
     })
 
-
-
     if (!hasError.value) {
       emit('upload-files', files.value)
     }
@@ -134,7 +60,7 @@ import image from './assets/image.png'
   >
     <img :src="image" width="120" alt="">
     <div class="drag-here">
-      <p>Drag your images here, <span>browse</span></p>
+      <p>Drag your images here, or <span>browse</span></p>
     </div>
     <p class="supported-files">Supports: JPG, PNG</p>
   </div>
