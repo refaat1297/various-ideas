@@ -1,7 +1,12 @@
-@import "_fonts.scss";
+@import "fonts";
 
 *,
 html,
 body {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
   font-family: ReguralFont, sans-serif;
 }
