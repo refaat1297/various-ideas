@@ -1,36 +1,32 @@
 <script setup>
   import DragAndDrop from "./DragAndDrop.vue";
   import FilesList from "./FilesList.vue";
-  import {reactive} from "vue";
-  import useFetchUploadedFiles from "@/components/advanced-file-uploader/use/useFetchUploadedFiles.js";
-  import useAsyncState from "@/use/useAsyncState";
+  import {useAdvancedImageUploader} from "@/components/advanced-file-uploader/use/useAdvancedImageUploader.js";
+  import {onMounted} from "vue";
 
+  const { filesData, getUploadedFiles, isLoading, uploadFileToStorage, uploads } = useAdvancedImageUploader()
 
-  const state = reactive({
-    uploads: [],
+  onMounted(() => {
+    getUploadedFiles()
   })
-
-  function uploadFiles (files) {
-    console.log('files', files)
-  }
-
-
-  const {state: files, isLoading,error, isReady} = useAsyncState(useFetchUploadedFiles(), [])
-
-
-
-
 </script>
 
 <template>
   <div class="advanced-file-uploader" v-cloak>
     <div class="content">
       <DragAndDrop
-        @upload-files="uploadFiles"
+        @upload-files="uploadFileToStorage"
       />
+
+      <div>
+        <p v-for="(upload, i) in uploads" :key="i">
+          {{ upload.name }} - {{ upload.currentProgress }}
+        </p>
+      </div>
+
       <FilesList
         :is-loading="isLoading"
-        :files="files"
+        :files="filesData"
       />
     </div>
   </div>
