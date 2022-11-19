@@ -4,7 +4,7 @@
   import {useAdvancedImageUploader} from "@/components/advanced-file-uploader/use/useAdvancedImageUploader.js";
   import {onMounted} from "vue";
 
-  const { filesData, getUploadedFiles, isLoading, uploadFileToStorage, uploads } = useAdvancedImageUploader()
+  const { filesData, getUploadedFiles, isLoading, uploadFileToStorage, uploads, deleteFile } = useAdvancedImageUploader()
 
   onMounted(() => {
     getUploadedFiles()
@@ -27,6 +27,7 @@
       <FilesList
         :is-loading="isLoading"
         :files="filesData"
+        @deleteFile="deleteFile"
       />
     </div>
   </div>
