@@ -1,12 +1,9 @@
+<script setup>
+  import AdvancedFileUploader from '@/components/advanced-file-uploader/Index.vue'
+</script>
+
 <template>
   <div>
-    <p>hello from the app</p>
+    <AdvancedFileUploader />
   </div>
 </template>
-
-<style lang="scss" scoped>
-p {
-  font-family: BoldFont, sans-serif;
-}
-</style>
-
