@@ -54,7 +54,7 @@
 
         <div class="actions d-flex justify-content-end align-items-center">
           <template v-if="upload.isUploaded">
-            <div class="btn completed">
+            <div class="btn cursor-pointer d-grid place-items-center completed">
               <ShieldCheckIcon />
             </div>
           </template>

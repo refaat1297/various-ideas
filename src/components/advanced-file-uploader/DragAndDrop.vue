@@ -1,5 +1,5 @@
 <script setup>
-  import {ref} from "vue";
+  import {computed, ref} from "vue";
   import image from './assets/image.png'
 
 
@@ -7,6 +7,18 @@
   const hasError = ref(false)
   const errMsg = ref('')
   let isDragged = ref(false)
+  const allowedTypes = ref([
+    'application/pdf',
+    'application/zip',
+    'image/jpg',
+    'image/jpeg',
+    'image/png',
+    'audio/mpeg'
+  ])
+
+  const ifFilesHaveNotAllowedTypes = computed(() => {
+    return files.value.some(el => !allowedTypes.value.includes(el.type))
+  })
 
   const emit = defineEmits(['upload-files'])
 
@@ -17,10 +29,15 @@
 
     files.value = [...(event?.dataTransfer?.files || event?.target?.files)]
 
-
     if (files.value.length > 4) {
       hasError.value = true
       errMsg.value = 'Max selected files is 4 :('
+      return
+    }
+
+    if (ifFilesHaveNotAllowedTypes.value) {
+      hasError.value = true
+      errMsg.value = 'Please select files we support :('
       return
     }
 
