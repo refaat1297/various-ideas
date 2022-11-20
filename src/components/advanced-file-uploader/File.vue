@@ -40,7 +40,7 @@
 
   const fileName = computed(() => {
     const extension = props.file.name.split('.').at(-1)
-    return props.file.name.length > 20 && `${props.file.name.slice(0, 20)}.${extension}`
+    return props.file.name.length > 20 ? `${props.file.name.slice(0, 20)}.${extension}` : props.file.name
   })
 
 
