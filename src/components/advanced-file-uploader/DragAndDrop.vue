@@ -1,14 +1,12 @@
 <script setup>
-import {ref} from "vue";
-import image from './assets/image.png'
-// import {ref as storageRef, uploadBytesResumable} from "firebase/storage";
-// import {storage} from "@/services/firebase.js";
+  import {ref} from "vue";
+  import image from './assets/image.png'
 
 
   const files = ref([])
   const hasError = ref(false)
   const errMsg = ref('')
-  const isDragged = ref(false)
+  let isDragged = ref(false)
 
   const emit = defineEmits(['upload-files'])
 
@@ -17,7 +15,7 @@ import image from './assets/image.png'
     hasError.value = false
     errMsg.value = ''
 
-    files.value = [...event.dataTransfer.files]
+    files.value = [...(event?.dataTransfer?.files || event?.target?.files)]
 
 
     if (files.value.length > 4) {
@@ -60,7 +58,13 @@ import image from './assets/image.png'
   >
     <img :src="image" width="120" alt="">
     <div class="drag-here">
-      <p>Drag your images here, or <span>browse</span></p>
+      <p>
+        Drag your images here, or
+        <label for="upload-file">
+          <span>browse</span>
+          <input type="file" id="upload-file" hidden @change="upload" multiple />
+        </label>
+      </p>
     </div>
     <p class="supported-files">Supports: JPG, PNG</p>
   </div>
