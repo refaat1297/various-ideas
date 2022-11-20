@@ -64,6 +64,15 @@
   max-height: 250px;
   overflow-y: scroll;
 
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(#95afc0, .5);
+    border-radius: 2px;
+  }
+
   .file {
     display: grid;
     grid-template-columns: 45px 1fr;
