@@ -25,8 +25,8 @@
 </script>
 
 <template>
-  <div class="advanced-file-uploader" v-cloak>
-    <div class="content">
+  <div class="advanced-file-uploader d-grid place-items-center" v-cloak>
+    <div class="content h-auto">
       <DragAndDrop
         @upload-files="uploadFileToStorage"
       />
@@ -52,12 +52,9 @@
   background-color: #E9F3FE;
   width: 100vw;
   height: 100vh;
-  display: grid;
-  place-items: center;
 
   .content {
     width: 50%;
-    height: auto;
     max-height: 700px;
     background-color: #fff;
     padding: 30px 30px;

@@ -43,27 +43,27 @@
 </script>
 
 <template>
-  <div class="uploading" :class="{'has-items': uploads.length}">
+  <div class="uploading overflow-scroll-y h-auto" :class="{'has-items': uploads.length}">
     <template v-for="upload in uploads" :key="`upload-${upload.id}`">
-      <div class="upload">
+      <div class="upload d-flex justify-content-between align-items-center p-relative overflow-hidden">
         <div class="overlay" :style="{ width: +upload.currentProgress.toFixed(0) + '%' }"></div>
         <div class="details">
-          <p>{{ upload.name }} - {{ upload.isUploaded ? 'Uploaded' : 'Uploading...' }}</p>
+          <p class="bold-font">{{ upload.name }} - {{ upload.isUploaded ? 'Uploaded' : 'Uploading...' }}</p>
           <span>{{ +upload.currentProgress.toFixed(0) }}%</span>
         </div>
 
-        <div class="actions">
+        <div class="actions d-flex justify-content-end align-items-center">
           <template v-if="upload.isUploaded">
             <div class="btn completed">
               <ShieldCheckIcon />
             </div>
           </template>
           <template v-else>
-            <div class="btn pause" @click="pauseAndPlay(upload.id)">
+            <div class="btn cursor-pointer d-grid place-items-center pause" @click="pauseAndPlay(upload.id)">
               <PlayIcon v-if="isPaused" />
               <PauseIcon v-else />
             </div>
-            <div class="btn cancel" @click="cancel(upload.id)">
+            <div class="btn cursor-pointer d-grid place-items-center cancel" @click="cancel(upload.id)">
               <CloseIcon />
             </div>
           </template>
@@ -76,24 +76,17 @@
 
 <style lang="scss" scoped>
 .uploading {
-  height: auto;
   max-height: 150px;
-  overflow: scroll;
 
   &.has-items {
     margin: 16px 0;
   }
 
   .upload {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: #fff;
     padding: 10px;
     border: 2px solid rgba(#3a6591, .1);
     border-radius: 8px;
-    position: relative;
-    overflow: hidden;
 
     &:not(:last-child) {
       margin-bottom: 8px;
@@ -114,7 +107,6 @@
 
     .details {
       p {
-        font-family: BoldFont, sans-serif;
         font-size: 1rem;
         color: #3a6591;
       }
@@ -126,9 +118,6 @@
     }
 
     .actions {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
       gap: 6px;
       z-index: 1;
 
@@ -136,13 +125,10 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        cursor: pointer;
-        display: grid;
-        place-items: center;
-
 
         &.completed {
           background-color: rgba(#2ecc71, .2);
+
           svg {
             fill: #2ecc71;
             width: 18px;
@@ -152,6 +138,7 @@
 
         &.pause {
           background-color: rgba(#3a6591, .2);
+
           svg {
             fill: #3a6591;
             width: 18px;
@@ -161,6 +148,7 @@
 
         &.cancel {
           background-color: rgba(#eb4d4b, .2);
+
           svg {
             fill: #eb4d4b;
             width: 18px;

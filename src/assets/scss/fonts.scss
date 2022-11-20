@@ -3,9 +3,17 @@
   src: url("@/assets/fonts/Nunito-Light.ttf");
 }
 
+.light-font {
+  font-family: LightFont, sans-serif;
+}
+
 @font-face {
   font-family: ReguralFont;
   src: url("@/assets/fonts/Nunito-Regular.ttf");
+}
+
+.regular-font {
+  font-family: ReguralFont, sans-serif;
 }
 
 @font-face {
@@ -13,9 +21,17 @@
   src: url("@/assets/fonts/Nunito-Medium.ttf");
 }
 
+.medium-font {
+  font-family: MediumFont, sans-serif;
+}
+
 @font-face {
   font-family: SemiBoldFont;
   src: url("@/assets/fonts/Nunito-SemiBold.ttf");
+}
+
+.semi-bold-font {
+  font-family: SemiBoldFont, sans-serif;
 }
 
 @font-face {
@@ -23,8 +39,17 @@
   src: url("@/assets/fonts/Nunito-Bold.ttf");
 }
 
+.bold-font {
+  font-family: BoldFont, sans-serif;
+}
+
 
 @font-face {
   font-family: ExtraBoldFont;
   src: url("@/assets/fonts/Nunito-ExtraBold.ttf");
 }
+
+.extra-bold-font {
+  font-family: ExtraBoldFont, sans-serif;
+}
+
