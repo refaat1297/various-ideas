@@ -3,8 +3,21 @@
   import FilesList from "./FilesList.vue";
   import {useAdvancedImageUploader} from "@/components/advanced-file-uploader/use/useAdvancedImageUploader.js";
   import {onMounted} from "vue";
+  import Uploading from "@/components/advanced-file-uploader/Uploading.vue";
 
-  const { filesData, getUploadedFiles, isLoading, uploadFileToStorage, uploads, deleteFile } = useAdvancedImageUploader()
+  const { filesData, getUploadedFiles, isLoading, uploadFileToStorage, uploads, deleteFile, cancelUpload, pauseUpload, playUpload } = useAdvancedImageUploader()
+
+  function cancel (id) {
+    cancelUpload(id)
+  }
+
+  function pause (id) {
+    pauseUpload(id)
+  }
+
+  function play (id) {
+    playUpload(id)
+  }
 
   onMounted(() => {
     getUploadedFiles()
@@ -18,11 +31,12 @@
         @upload-files="uploadFileToStorage"
       />
 
-      <div>
-        <p v-for="(upload, i) in uploads" :key="i">
-          {{ upload.name }} - {{ upload.currentProgress }}
-        </p>
-      </div>
+      <Uploading
+        :uploads="uploads"
+        @pause="pause"
+        @play="play"
+        @cancel="cancel"
+      />
 
       <FilesList
         :is-loading="isLoading"
