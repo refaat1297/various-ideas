@@ -45,10 +45,10 @@
 </script>
 
 <template>
-  <p v-if="errMsg" class="error-msg">{{ errMsg }}</p>
+  <p v-if="errMsg" class="error-msg text-center">{{ errMsg }}</p>
 
   <div
-    class="drag-drop"
+    class="drag-drop d-flex justify-content-center align-items-center flex-column user-select-none"
     :class="{'is-dragged': isDragged, 'has-error': hasError}"
     @dragenter.prevent.stop="isDragged = true"
     @dragover.prevent.stop="isDragged = true"
@@ -56,16 +56,16 @@
     @dragleave.prevent.stop="isDragged = false"
     @drop.prevent.stop="upload"
   >
-    <div class="images">
+    <div class="images p-relative">
       <img :src="image" class="image-left" width="100" alt="">
-      <img :src="image" class="main-image" width="100" alt="">
+      <img :src="image" class="main-image p-relative" width="100" alt="">
       <img :src="image" class="image-right" width="100" alt="">
     </div>
-    <div class="drag-here">
+    <div class="drag-here font-weight-bold user-select-none d-flex justify-content-center align-items-center flex-column bold-font">
       <p>
         Drag your images here, or
         <label for="upload-file">
-          <span>browse</span>
+          <span class="cursor-pointer">browse</span>
           <input
             type="file"
             id="upload-file"
@@ -86,19 +86,13 @@
 .error-msg {
   color: #eb4d4b;
   font-size: 1.2rem;
-  text-align: center;
   margin-bottom: 10px;
 }
 .drag-drop {
   height: 220px;
   border: 3px dashed #95a5a654;
   border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
   transition: all .2s ease-in-out;
-  user-select: none;
   margin: 10px 0;
 
   &.is-dragged {
@@ -129,16 +123,11 @@
     }
   }
 
-
-
   .images {
-    position: relative;
-
     img {
       transition: all .2s ease-in-out;
 
       &.main-image {
-        position: relative;
         z-index: 1;
       }
 
@@ -159,16 +148,14 @@
   }
 
   .drag-here {
-    font-family: BoldFont, sans-serif;
-    font-weight: bold;
     margin: 10px 0;
+
     p {
       font-size: 1.3rem;
       color: #3a6591;
 
       span {
         color: #0652DD;
-        cursor: pointer;
       }
 
       @media (max-width: 767px) {
