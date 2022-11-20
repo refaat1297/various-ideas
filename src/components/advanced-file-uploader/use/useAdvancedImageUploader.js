@@ -8,7 +8,46 @@ export function useAdvancedImageUploader () {
 
   let filesData = ref([])
   const isLoading = ref(false)
-  const uploads = ref([])
+  let uploads = ref([
+    // {
+    //   id: Math.random().toString(36).substring(2, 9),
+    //   currentProgress: 100.00,
+    //   name:"invention-icon.svg",
+    //   type:"image/svg+xml",
+    //   isUploaded:false,
+    // },
+    // {
+    //   id: Math.random().toString(36).substring(2, 9),
+    //   currentProgress: 100.00,
+    //   name:"invention-icon.svg",
+    //   type:"image/svg+xml",
+    //   isUploaded:false,
+    // }
+  ])
+
+  const cancelUpload = async (id) => {
+    const selectedUpload = uploads.value.find(el => el.id === id)
+    await selectedUpload?.task.cancel()
+    uploads.value = uploads.value.filter(el => el.id !== id)
+  }
+
+  const pauseUpload = async (id) => {
+    const selectedUpload = uploads.value.find(el => el.id === id)
+    console.log('selectedUpload', selectedUpload.task)
+    if (selectedUpload) {
+      selectedUpload?.task.pause()
+    }
+
+  }
+
+  const playUpload = async (id) => {
+    const selectedUpload = uploads.value.find(el => el.id === id)
+    console.log('selectedUpload', selectedUpload.task)
+    if (selectedUpload) {
+      selectedUpload?.task.resume()
+    }
+
+  }
 
 
   const getUploadedFiles = async () => {
@@ -36,7 +75,7 @@ export function useAdvancedImageUploader () {
   }
 
   function stateChangedObserver (snapshot, index) {
-    uploads.value[index].currentProgress = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(2);
+    uploads.value[index].currentProgress = +((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(2);
   }
 
   const completionObserver = async (file, task, storageName) => {
@@ -68,6 +107,7 @@ export function useAdvancedImageUploader () {
       const task = uploadToStorage(file, storageName)
 
       const uploadIndex = uploads.value.push({
+        id: Math.random().toString(36).substring(2, 9),
         task,
         currentProgress: 0,
         name: file.name,
@@ -77,7 +117,20 @@ export function useAdvancedImageUploader () {
 
       task.on('state_changed', (snapshot) => {
         stateChangedObserver(snapshot, uploadIndex)
-      }, null, () => {
+
+        console.log('snapshot.state', snapshot.state)
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused', task);
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+        }
+
+      }, (error) => {
+        console.log('error', error, task)
+      }, () => {
         completionObserver(file, task, storageName)
       })
 
@@ -101,7 +154,10 @@ export function useAdvancedImageUploader () {
     isLoading,
     uploadFileToStorage,
     uploads,
-    deleteFile
+    deleteFile,
+    cancelUpload,
+    pauseUpload,
+    playUpload
   }
 
 }
