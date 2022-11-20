@@ -63,11 +63,13 @@ export function useAdvancedImageUploader () {
     return task
   }
 
-  function stateChangedObserver (snapshot, index) {
-    uploads.value[index].currentProgress = +((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(2);
+  function stateChangedObserver (snapshot, id) {
+    const selectedUpload = uploads.value.find(el => el.id === id)
+    selectedUpload.currentProgress = +((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(2);
   }
 
-  const completionObserver = async (file, task, storageName) => {
+  const completionObserver = async (file, task, storageName, id) => {
+    const selectedUpload = uploads.value.find(el => el.id === id)
     const requestData = {
       name: file.name,
       storageName,
@@ -78,6 +80,12 @@ export function useAdvancedImageUploader () {
     requestData.url = await getDownloadURL(task.snapshot.ref)
 
     const docRef = await addDoc(collection(db, "advanced-image-uploader"), requestData);
+
+    selectedUpload.isUploaded = true
+
+    setTimeout(() => {
+      uploads.value = uploads.value.filter(el => el.id !== id)
+    }, 1000)
 
     filesData.value = [
       {
@@ -95,26 +103,24 @@ export function useAdvancedImageUploader () {
 
       const task = uploadToStorage(file, storageName)
 
-      const uploadIndex = uploads.value.push({
+      const uploadObj = {
         id: Math.random().toString(36).substring(2, 9),
         task,
         currentProgress: 0,
         name: file.name,
         type: file.type,
         isUploaded: false
-      }) - 1
+      }
+
+      uploads.value.push(uploadObj)
 
       task.on('state_changed', (snapshot) => {
-        stateChangedObserver(snapshot, uploadIndex)
+        stateChangedObserver(snapshot,  uploadObj.id)
       }, (error) => {
         // here log the error that returns from the firebase storage
         console.log('error', error, task)
       }, () => {
-        completionObserver(file, task, storageName)
-        uploads.value[uploadIndex].isUploaded = true
-        setTimeout(() => {
-          uploads.value.splice(uploadIndex, 1);
-        }, 5000)
+        completionObserver(file, task, storageName, uploadObj.id)
       })
 
     })

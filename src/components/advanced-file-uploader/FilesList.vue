@@ -28,7 +28,7 @@
 </script>
 
 <template>
-  <div v-if="isLoading">
+  <div v-if="isLoading" class="d-flex justify-content-center align-items-center">
     <BaseLoader />
   </div>
   <div v-else class="files-list w-100 h-auto overflow-scroll-y">
