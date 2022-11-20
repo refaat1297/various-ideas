@@ -59,9 +59,9 @@
 <style lang="scss" scoped>
 .files-list {
   width: 100%;
-  margin-top: 30px;
+  margin-top: 10px;
   height: auto;
-  max-height: 250px;
+  max-height: 210px;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {

@@ -3,6 +3,7 @@
   import CloseIcon from "@/components/shared/icons/CloseIcon.vue";
   import PlayIcon from "@/components/shared/icons/PlayIcon.vue";
   import {ref} from "vue";
+  import ShieldCheckIcon from "@/components/shared/icons/ShieldCheckIcon.vue";
 
   defineProps({
     uploads: {
@@ -49,18 +50,25 @@
       <div class="upload">
         <div class="overlay" :style="{ width: +upload.currentProgress.toFixed(0) + '%' }"></div>
         <div class="details">
-          <p>{{ upload.name }} - Uploading...</p>
+          <p>{{ upload.name }} - {{ upload.isUploaded ? 'Uploaded' : 'Uploading...' }}</p>
           <span>{{ +upload.currentProgress.toFixed(0) }}%</span>
         </div>
 
         <div class="actions">
-          <div class="btn pause" @click="pauseAndPlay(upload.id)">
-            <PlayIcon v-if="isPaused" />
-            <PauseIcon v-else />
-          </div>
-          <div class="btn cancel" @click="cancel(upload.id)">
-            <CloseIcon />
-          </div>
+          <template v-if="upload.isUploaded">
+            <div class="btn completed">
+              <ShieldCheckIcon />
+            </div>
+          </template>
+          <template v-else>
+            <div class="btn pause" @click="pauseAndPlay(upload.id)">
+              <PlayIcon v-if="isPaused" />
+              <PauseIcon v-else />
+            </div>
+            <div class="btn cancel" @click="cancel(upload.id)">
+              <CloseIcon />
+            </div>
+          </template>
         </div>
       </div>
     </template>
@@ -71,6 +79,9 @@
 <style lang="scss" scoped>
 .uploading {
   margin: 16px 0;
+  height: auto;
+  max-height: 150px;
+  overflow: scroll;
 
   .upload {
     display: flex;
@@ -128,6 +139,15 @@
         display: grid;
         place-items: center;
 
+
+        &.completed {
+          background-color: rgba(#2ecc71, .2);
+          svg {
+            fill: #2ecc71;
+            width: 18px;
+            height: 18px;
+          }
+        }
 
         &.pause {
           background-color: rgba(#3a6591, .2);

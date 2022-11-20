@@ -56,7 +56,7 @@
     @dragleave.prevent.stop="isDragged = false"
     @drop.prevent.stop="upload"
   >
-    <img :src="image" width="120" alt="">
+    <img :src="image" width="100" alt="">
     <div class="drag-here">
       <p>
         Drag your images here, or
@@ -80,7 +80,7 @@
   margin-bottom: 10px;
 }
 .drag-drop {
-  height: 300px;
+  height: 220px;
   border: 3px dashed #95a5a654;
   border-radius: 10px;
   display: flex;
