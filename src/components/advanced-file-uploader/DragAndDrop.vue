@@ -144,14 +144,14 @@
 
       &.image-left {
         opacity: .6;
-        filter: grayscale(1);
+        filter: grayscale(.6);
         transform: translateX(100%) translateY(10px) scale(.7) rotate(0deg);
         z-index: 0;
       }
 
       &.image-right {
         opacity: .6;
-        filter: grayscale(1);
+        filter: grayscale(.6);
         transform: translateX(-100%) translateY(10px) scale(.7) rotate(0deg) rotateY(180deg);
         z-index: 0;
       }
@@ -161,7 +161,7 @@
   .drag-here {
     font-family: BoldFont, sans-serif;
     font-weight: bold;
-    margin: 20px 0 10px;
+    margin: 10px 0;
     p {
       font-size: 1.3rem;
       color: #3a6591;
@@ -170,12 +170,20 @@
         color: #0652DD;
         cursor: pointer;
       }
+
+      @media (max-width: 767px) {
+        font-size: 1.1rem;
+      }
     }
   }
 
   .supported-files {
     font-size: 1rem;
     color: #95afc0;
+
+    @media (max-width: 767px) {
+      font-size: .8rem;
+    }
   }
 }
 </style>

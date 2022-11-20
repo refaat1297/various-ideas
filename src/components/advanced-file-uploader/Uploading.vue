@@ -20,12 +20,10 @@
 
 
   function pause (id) {
-    console.log('pause')
     emit('pause', id)
   }
 
   function play (id) {
-    console.log('play')
     emit('play', id)
   }
 
