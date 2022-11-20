@@ -66,11 +66,17 @@
         Drag your images here, or
         <label for="upload-file">
           <span>browse</span>
-          <input type="file" id="upload-file" hidden @change="upload" multiple />
+          <input
+            type="file"
+            id="upload-file"
+            hidden
+            accept="image/png, image/jpeg, image/jpeg, application/zip, application/pdf, audio/mpeg"
+            @change="upload"
+            multiple />
         </label>
       </p>
     </div>
-    <p class="supported-files">Supports: JPG, PNG</p>
+    <p class="supported-files">Supports: JPG, JPEG, PNG, ZIP, PDF, AUDIO</p>
   </div>
 
 
@@ -91,22 +97,13 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  transition: all .3s ease-in-out;
+  transition: all .2s ease-in-out;
   user-select: none;
+  margin: 10px 0;
 
   &.is-dragged {
     border-color: #0652DD;
     background-color: #E9F3FE;
-
-    .images {
-      .image-right {
-        transform: translateX(-50%) translateY(10px) scale(.7) rotate(30deg);
-      }
-
-      .image-left {
-        transform: translateX(50%) translateY(10px) scale(.7) rotate(-30deg);
-      }
-    }
   }
 
   &.has-error {
@@ -120,6 +117,16 @@
 
   &:hover {
     background-color: #E9F3FE;
+
+    .images {
+      .image-right {
+        transform: translateX(-50%) translateY(10px) scale(.7) rotate(30deg);
+      }
+
+      .image-left {
+        transform: translateX(50%) translateY(10px) scale(.7) rotate(-30deg) rotateY(180deg);
+      }
+    }
   }
 
 
@@ -136,14 +143,16 @@
       }
 
       &.image-left {
+        opacity: .6;
         filter: grayscale(1);
         transform: translateX(100%) translateY(10px) scale(.7) rotate(0deg);
         z-index: 0;
       }
 
       &.image-right {
+        opacity: .6;
         filter: grayscale(1);
-        transform: translateX(-100%) translateY(10px) scale(.7) rotate(0deg);
+        transform: translateX(-100%) translateY(10px) scale(.7) rotate(0deg) rotateY(180deg);
         z-index: 0;
       }
     }
