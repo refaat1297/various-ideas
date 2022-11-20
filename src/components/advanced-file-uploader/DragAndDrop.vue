@@ -16,11 +16,15 @@
     'audio/mpeg'
   ])
 
+  const emit = defineEmits(['upload-files'])
+
+
   const ifFilesHaveNotAllowedTypes = computed(() => {
     return files.value.some(el => !allowedTypes.value.includes(el.type))
   })
 
-  const emit = defineEmits(['upload-files'])
+
+
 
   function upload (event) {
     isDragged.value = false
@@ -126,6 +130,7 @@
     }
   }
 
+  &.is-dragged,
   &:hover {
     background-color: #E9F3FE;
 

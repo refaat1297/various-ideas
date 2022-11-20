@@ -31,10 +31,18 @@
     return +(props.file.size * 0.000001).toFixed(3)
   })
 
+
   const fileType = computed(() => {
     const type = Object.keys(imagesTypes.value).find(el => props.file.type.includes(el))
     return imagesTypes.value[type]
   })
+
+
+  const fileName = computed(() => {
+    const extension = props.file.name.split('.').at(-1)
+    return props.file.name.length > 20 && `${props.file.name.slice(0, 20)}.${extension}`
+  })
+
 
   function deleteFile () {
     emit('delete-file', props.file.id)
@@ -50,7 +58,7 @@
         <a :href="file.url"
            target="_blank"
            class="information d-flex justify-content-start align-items-start flex-column text-decoration-none outline-none">
-          <span class="name medium-font">{{ file.name }}</span>
+          <span class="name medium-font">{{ fileName }}</span>
           <span class="size medium-font font-weight-bold">{{ fileSize }} MB</span>
         </a>
         <div class="delete-btn d-grid place-items-center">
