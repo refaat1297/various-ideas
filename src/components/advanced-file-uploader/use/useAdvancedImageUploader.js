@@ -132,6 +132,10 @@ export function useAdvancedImageUploader () {
         console.log('error', error, task)
       }, () => {
         completionObserver(file, task, storageName)
+        uploads.value[uploadIndex].isUploaded = true
+        setTimeout(() => {
+          uploads.value.splice(uploadIndex, 1);
+        }, 5000)
       })
 
     })
