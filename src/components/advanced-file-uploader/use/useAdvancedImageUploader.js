@@ -8,32 +8,19 @@ export function useAdvancedImageUploader () {
 
   let filesData = ref([])
   const isLoading = ref(false)
-  let uploads = ref([
-    // {
-    //   id: Math.random().toString(36).substring(2, 9),
-    //   currentProgress: 100.00,
-    //   name:"invention-icon.svg",
-    //   type:"image/svg+xml",
-    //   isUploaded:false,
-    // },
-    // {
-    //   id: Math.random().toString(36).substring(2, 9),
-    //   currentProgress: 100.00,
-    //   name:"invention-icon.svg",
-    //   type:"image/svg+xml",
-    //   isUploaded:false,
-    // }
-  ])
+  let uploads = ref([])
 
   const cancelUpload = async (id) => {
     const selectedUpload = uploads.value.find(el => el.id === id)
     await selectedUpload?.task.cancel()
+
     uploads.value = uploads.value.filter(el => el.id !== id)
   }
 
   const pauseUpload = async (id) => {
     const selectedUpload = uploads.value.find(el => el.id === id)
-    console.log('selectedUpload', selectedUpload.task)
+
+    // here it should be working fine, but firebase storage throws an error
     if (selectedUpload) {
       selectedUpload?.task.pause()
     }
@@ -42,13 +29,13 @@ export function useAdvancedImageUploader () {
 
   const playUpload = async (id) => {
     const selectedUpload = uploads.value.find(el => el.id === id)
-    console.log('selectedUpload', selectedUpload.task)
+
+    // here it should be working fine, but firebase storage throws an error
     if (selectedUpload) {
       selectedUpload?.task.resume()
     }
 
   }
-
 
   const getUploadedFiles = async () => {
     isLoading.value = true
@@ -64,6 +51,7 @@ export function useAdvancedImageUploader () {
         }
       ]
     })
+
     isLoading.value = false
   }
 
@@ -71,6 +59,7 @@ export function useAdvancedImageUploader () {
     let task = null
     const advancedImageUploaderRef = storageRef(storage, `advanced-image-uploader/${storageName}`)
     task = uploadBytesResumable(advancedImageUploaderRef, file)
+
     return task
   }
 
@@ -117,18 +106,8 @@ export function useAdvancedImageUploader () {
 
       task.on('state_changed', (snapshot) => {
         stateChangedObserver(snapshot, uploadIndex)
-
-        console.log('snapshot.state', snapshot.state)
-        switch (snapshot.state) {
-          case 'paused':
-            console.log('Upload is paused', task);
-            break;
-          case 'running':
-            console.log('Upload is running');
-            break;
-        }
-
       }, (error) => {
+        // here log the error that returns from the firebase storage
         console.log('error', error, task)
       }, () => {
         completionObserver(file, task, storageName)
@@ -154,10 +133,10 @@ export function useAdvancedImageUploader () {
 
   return {
     filesData,
-    getUploadedFiles,
     isLoading,
-    uploadFileToStorage,
     uploads,
+    getUploadedFiles,
+    uploadFileToStorage,
     deleteFile,
     cancelUpload,
     pauseUpload,

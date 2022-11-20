@@ -2,6 +2,7 @@
 
 <script setup>
   import File from "@/components/advanced-file-uploader/File.vue";
+  import BaseLoader from "@/components/shared/BaseLoader.vue";
 
   defineProps({
     files: {
@@ -27,12 +28,11 @@
 </script>
 
 <template>
-  <div class="files-list">
-    <div v-if="isLoading">
-      Loading...
-    </div>
-
-    <template v-else v-for="file in files" :key="file.id">
+  <div v-if="isLoading">
+    <BaseLoader />
+  </div>
+  <div v-else class="files-list">
+    <template v-for="file in files" :key="file.id">
       <File :file="file" @delete-file="deleteFile" />
     </template>
   </div>

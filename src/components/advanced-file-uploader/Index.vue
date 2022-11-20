@@ -48,5 +48,25 @@
 </template>
 
 <style lang="scss" scoped>
-@import "style";
+.advanced-file-uploader {
+  background-color: #E9F3FE;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+
+  .content {
+    width: 50%;
+    height: auto;
+    max-height: 700px;
+    background-color: #fff;
+    padding: 30px 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 34px 22px #0000000a;
+
+    @media (max-width: 767px) {
+      width: 85%;
+    }
+  }
+}
 </style>
