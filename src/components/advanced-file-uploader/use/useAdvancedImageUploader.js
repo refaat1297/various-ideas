@@ -10,12 +10,16 @@ export function useAdvancedImageUploader () {
   const isLoading = ref(false)
   let uploads = ref([])
 
+
+
   const cancelUpload = async (id) => {
     const selectedUpload = uploads.value.find(el => el.id === id)
     await selectedUpload?.task.cancel()
 
     uploads.value = uploads.value.filter(el => el.id !== id)
   }
+
+
 
   const pauseUpload = async (id) => {
     const selectedUpload = uploads.value.find(el => el.id === id)
@@ -27,6 +31,8 @@ export function useAdvancedImageUploader () {
 
   }
 
+
+
   const playUpload = async (id) => {
     const selectedUpload = uploads.value.find(el => el.id === id)
 
@@ -36,6 +42,8 @@ export function useAdvancedImageUploader () {
     }
 
   }
+
+
 
   const getUploadedFiles = async () => {
     isLoading.value = true
@@ -55,6 +63,8 @@ export function useAdvancedImageUploader () {
     isLoading.value = false
   }
 
+
+
   function uploadToStorage (file, storageName) {
     let task = null
     const advancedImageUploaderRef = storageRef(storage, `advanced-image-uploader/${storageName}`)
@@ -63,10 +73,13 @@ export function useAdvancedImageUploader () {
     return task
   }
 
+
   function stateChangedObserver (snapshot, id) {
     const selectedUpload = uploads.value.find(el => el.id === id)
     selectedUpload.currentProgress = +((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(2);
   }
+
+
 
   const completionObserver = async (file, task, storageName, id) => {
     const selectedUpload = uploads.value.find(el => el.id === id)
@@ -95,6 +108,8 @@ export function useAdvancedImageUploader () {
       ...filesData.value,
     ]
   }
+
+
 
   const uploadFileToStorage = (files) => {
     [...files].forEach(async (file) => {
@@ -126,6 +141,8 @@ export function useAdvancedImageUploader () {
     })
   }
 
+
+
   const deleteFile = async (id) => {
     const storageName = filesData.value.find(el => el.id === id)?.storageName
     const fileRef = storageRef(storage, `advanced-image-uploader/${storageName}`)
@@ -135,6 +152,8 @@ export function useAdvancedImageUploader () {
 
     filesData.value = filesData.value.filter(el => el.id !== id)
   }
+
+
 
 
   return {
