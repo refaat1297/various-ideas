@@ -59,7 +59,6 @@
 <style lang="scss" scoped>
 .files-list {
   width: 100%;
-  margin-top: 10px;
   height: auto;
   max-height: 210px;
   overflow-y: scroll;

@@ -45,7 +45,7 @@
 </script>
 
 <template>
-  <div class="uploading">
+  <div class="uploading" :class="{'has-items': uploads.length}">
     <template v-for="upload in uploads" :key="`upload-${upload.id}`">
       <div class="upload">
         <div class="overlay" :style="{ width: +upload.currentProgress.toFixed(0) + '%' }"></div>
@@ -78,10 +78,13 @@
 
 <style lang="scss" scoped>
 .uploading {
-  margin: 16px 0;
   height: auto;
   max-height: 150px;
   overflow: scroll;
+
+  &.has-items {
+    margin: 16px 0;
+  }
 
   .upload {
     display: flex;

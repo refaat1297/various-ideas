@@ -56,7 +56,11 @@
     @dragleave.prevent.stop="isDragged = false"
     @drop.prevent.stop="upload"
   >
-    <img :src="image" width="100" alt="">
+    <div class="images">
+      <img :src="image" class="image-left" width="100" alt="">
+      <img :src="image" class="main-image" width="100" alt="">
+      <img :src="image" class="image-right" width="100" alt="">
+    </div>
     <div class="drag-here">
       <p>
         Drag your images here, or
@@ -90,10 +94,20 @@
   transition: all .3s ease-in-out;
   user-select: none;
 
-    &.is-dragged {
-      border-color: #0652DD;
-      background-color: #E9F3FE;
+  &.is-dragged {
+    border-color: #0652DD;
+    background-color: #E9F3FE;
+
+    .images {
+      .image-right {
+        transform: translateX(-50%) translateY(10px) scale(.7) rotate(30deg);
+      }
+
+      .image-left {
+        transform: translateX(50%) translateY(10px) scale(.7) rotate(-30deg);
+      }
     }
+  }
 
   &.has-error {
     border-color: #eb4d4b;
@@ -108,8 +122,31 @@
     background-color: #E9F3FE;
   }
 
-  img {
 
+
+  .images {
+    position: relative;
+
+    img {
+      transition: all .2s ease-in-out;
+
+      &.main-image {
+        position: relative;
+        z-index: 1;
+      }
+
+      &.image-left {
+        filter: grayscale(1);
+        transform: translateX(100%) translateY(10px) scale(.7) rotate(0deg);
+        z-index: 0;
+      }
+
+      &.image-right {
+        filter: grayscale(1);
+        transform: translateX(-100%) translateY(10px) scale(.7) rotate(0deg);
+        z-index: 0;
+      }
+    }
   }
 
   .drag-here {
