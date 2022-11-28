@@ -48,10 +48,17 @@
 
 
         /**
+         * URLs
+         */
+        .replace(/((\[(.*)\])(\(((https?:\/\/)?(www\.)?([\w+\-_\.?]+)\.([^\W_]+)[\/\w\-?]*)\)))/gi, '<a href="$5" target="_blank">$3</a>')
+
+
+
+        /**
          * if the string is # this is heading
          * @param match: # this is heading
          * @param hash: #
-         * @param str: his is heading
+         * @param str: this is heading
          *
          * It needs to be tha last one because it breaks the concatenation between `replace` methods
          *
@@ -80,6 +87,7 @@
       <p>- Bold: [ **text** OR __text__ ]</p>
       <p>- Italic: [ *text* OR _text_ ]</p>
       <p>- Line Through Text: [ ~~text~~ ]</p>
+      <p>- URLs: [ [google](https://www.google.com) ]</p>
     </div>
 
     <textarea class="w-100" v-model="markdown"></textarea>
