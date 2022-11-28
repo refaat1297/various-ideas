@@ -97,7 +97,7 @@
         </label>
       </p>
     </div>
-    <p class="supported-files">Supports: JPG, JPEG, PNG, ZIP, PDF, AUDIO</p>
+    <p class="supported-files regular-font">Supports: JPG, JPEG, PNG, ZIP, PDF, AUDIO</p>
   </div>
 
 
