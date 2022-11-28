@@ -8,8 +8,8 @@
         /**
          * Normal Text
          * 2 groups
-         * 1st: select any single character                                 --- (.* *)                       --- $1
-         * 2nd: the string finishes with space or word boundary             --- ( *|\b)                      --- $2
+         * 1st: select any single character                                 --- (.* *)               --- $1
+         * 2nd: the string finishes with space or word boundary             --- ( *|\b)              --- $2
          */
         .replace(/\b^(.* *)$( *|\b)/gim, '<p>$1</p>')
 
@@ -24,6 +24,7 @@
          */
         .replace(/((\*\*|__)(.*?)(\2))/gi, '<b>$3</b>')
 
+
         /**
          * Italic Text
          * 4 groups
@@ -33,6 +34,17 @@
          * 4th: use the same selector from second group           --- (\2)                            --- $4
          */
         .replace(/((\*|_)(.*?)(\2))/gi, '<i>$3</i>')
+
+
+        /**
+         * Line Through Text
+         * 4 groups
+         * 1st: the whole group                                   --- ((~~)(.*?)(\2))                   --- $1
+         * 2nd: select the text starts with ~~                    --- (~~)                              --- $2
+         * 3rd: select any text between matches                   --- (.*?)                             --- $3
+         * 4th: use the same selector from second group           --- (\2)                              --- $4
+         */
+        .replace(/((~~)(.*?)(\2))/gi, '<s>$3</s>')
 
 
         /**
@@ -67,12 +79,13 @@
       <p>- Headings: from 1 to 6 [ #, ##, ###, ...ect ]</p>
       <p>- Bold: [ **text** OR __text__ ]</p>
       <p>- Italic: [ *text* OR _text_ ]</p>
+      <p>- Line Through Text: [ ~~text~~ ]</p>
     </div>
 
     <textarea class="w-100" v-model="markdown"></textarea>
-    <div v-html="html"></div>
+    <div class="preview" v-html="html"></div>
     <hr class="">
-    <pre>{{ html }}</pre>
+    <pre class="preview">{{ html }}</pre>
   </div>
 </template>
 
@@ -91,6 +104,11 @@ textarea {
 
 hr {
   margin: 40px auto;
+}
+
+.preview {
+  padding: 20px;
+  font-size: 20px;
 }
 </style>
 
