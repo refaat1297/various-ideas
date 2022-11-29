@@ -1,60 +1,46 @@
 
 <script setup>
 
-  import {ref} from "vue";
+import {onMounted, ref} from "vue";
 
-  const editor = ref('')
+  const editorRef = ref('')
   const preview = ref('')
 
-  // watchEffect(() => {
-  //   console.log('editor', editor.value)
-  //   console.log('editor', editor.value)
-  // })
-
+  const patterns = {
+    h1: /^(# )(.*$)/gim,
+    h2: /^(#{2} )(.*$)/gim,
+    h3: /^(#{3} )(.*$)/gim,
+    h4: /^(#{4} )(.*$)/gim,
+    h5: /^(#{5} )(.*$)/gim,
+    h6: /^(#{6} )(.*$)/gim,
+    paragraph: /\b^(.* *)$( *|\b)/gim,
+    bold: /((\*\*|__)(.*?)(\2))/gi,
+    italic: /((\*|_)(.*?)(\2))/gi,
+    lineThrough: /((~~)(.*?)(\2))/gi,
+    url: /((\[(.*)\])(\(((https?:\/\/)(www\.)?([\w+\-_\.?]+)([^\W_]+)([\/\w\-?]*)(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)\)))/gi,
+    img: /!\[(.*)\](\(((https?:\/\/)[www\.]?[\w+\-_\.?]+[^\W_]+[\/\w\-?]*(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)(\s+"(.*)")?(\s+=(\d+)x(\d+))?\))/ig
+  }
 
   function update (e) {
-    // console.log('----------------------------')
-    // console.log('innerText', e.target.innerText)
-    // console.log('textContent', e.target.textContent)
-    // console.log('innerHTML', e.target.innerHTML)
-    // console.log('----------------------------')
 
+    const value = e?.target?.innerText || editorRef.value?.innerText
 
-    editor.value = e.target.innerText
-
-
-
-    preview.value = e.target.innerText
-
-      .replace(/^(# )(.*$)/gim, '<h1>$2</h1>') // heading 1
-      .replace(/^(#{2} )(.*$)/gim, '<h2>$2</h2>') // heading 2
-      .replace(/^(#{3} )(.*$)/gim, '<h3>$2</h3>') // heading 3
-      .replace(/^(#{4} )(.*$)/gim, '<h4>$2</h4>') // heading 4
-      .replace(/^(#{5} )(.*$)/gim, '<h5>$2</h5>') // heading 5
-      .replace(/^(#{6} )(.*$)/gim, '<h6>$2</h6>') // heading 6
-      .replace(/\b^(.* *)$( *|\b)/gim, '<p>$1</p>') // paragraph
-      .replace(/((\*\*|__)(.*?)(\2))/gi, '<b>$3</b>') // bold
-      .replace(/((\*|_)(.*?)(\2))/gi, '<i>$3</i>') // italic
-      .replace(/((~~)(.*?)(\2))/gi, '<s>$3</s>') // line through
-      .replace(/((\[(.*)\])(\(((https?:\/\/)(www\.)?([\w+\-_\.?]+)([^\W_]+)([\/\w\-?]*)(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)\)))/gi,
-          '<a href="$5" target="_blank">$3</a>') // URL
-
-
-
-
-      // .replace(/^(# {1,6})(.*$)/gim, (match, hash, str) => {
-      //   return '<h' + hash.length + '>' + str + '</h' + hash.length + '>'
-      // })
-
-
-
-
-
-
-
-
-
+    preview.value = value
+      .replace(patterns.h1, '<h1>$2</h1>') // heading 1
+      .replace(patterns.h2, '<h2>$2</h2>') // heading 2
+      .replace(patterns.h3, '<h3>$2</h3>') // heading 3
+      .replace(patterns.h4, '<h4>$2</h4>') // heading 4
+      .replace(patterns.h5, '<h5>$2</h5>') // heading 5
+      .replace(patterns.h6, '<h6>$2</h6>') // heading 6
+      .replace(patterns.paragraph, '<p>$1</p>') // paragraph
+      .replace(patterns.bold, '<b>$3</b>') // bold
+      .replace(patterns.italic, '<i>$3</i>') // italic
+      .replace(patterns.lineThrough, '<s>$3</s>') // line through
+      .replace(patterns.url, '<a href="$5" target="_blank">$3</a>') // URL
+      .replace(patterns.img, '<img src="$3" title="$7" alt="$1" width="$9" height="$10" />') // img
   }
+
+  onMounted(() => update())
 
 
 </script>
@@ -62,7 +48,28 @@
 <template>
   <div class="markdown">
 
-    <div class="editor" spellcheck="true" contenteditable="true" @input="update"></div>
+    <div ref="editorRef" class="editor" spellcheck="true" contenteditable="true" @input="update">
+      # heading 1 <br><br>
+      ## heading 2 <br><br>
+      ### heading 3 <br><br>
+      #### heading 4 <br><br>
+      ##### heading 5 <br><br>
+      ###### heading 6 <br><br>
+
+      <br>
+      ![dsdsds](https://images.unsplash.com/photo-1669742602422-43d2d8764ee9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=986&q=80      "dsds"      =300x300)
+      <br>
+
+
+      <br><br>
+      <p>My ~~name~~ is _Ahmed_ **Refaat**, Try now :)</p>
+
+      <br><br>
+      <br><br>
+
+      <p>[Click Here](https://www.googl.com)</p>
+
+    </div>
 
     <div class="preview" v-html="preview"></div>
 
