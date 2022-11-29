@@ -67,7 +67,7 @@ import {onMounted, ref} from "vue";
       <br><br>
       <br><br>
 
-      <p>[Click Here](https://www.googl.com)</p>
+      <p>[Click Here](https://www.google.com)</p>
 
     </div>
 
