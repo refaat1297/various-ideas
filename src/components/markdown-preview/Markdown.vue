@@ -18,7 +18,11 @@ import {onMounted, ref} from "vue";
     italic: /((\*|_)(.*?)(\2))/gi,
     lineThrough: /((~~)(.*?)(\2))/gi,
     url: /((\[(.*)\])(\(((https?:\/\/)(www\.)?([\w+\-_\.?]+)([^\W_]+)([\/\w\-?]*)(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)\)))/gi,
-    img: /!\[(.*)\](\(((https?:\/\/)[www\.]?[\w+\-_\.?]+[^\W_]+[\/\w\-?]*(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)(\s+"(.*)")?(\s+=(\d+)x(\d+))?\))/ig
+    img: /!\[(.*)\](\(((https?:\/\/)[www\.]?[\w+\-_\.?]+[^\W_]+[\/\w\-?]*(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)(\s+"(.*)")?(\s+=(\d+)x(\d+))?\))/ig,
+    line: /(-{3,})/gi,
+    code: /`{3}([\S]*)?\n([\s\S]+)\n`{3}/gi,
+    quote: />([\S]*)?\n([\s\S]+)\n>/gi,
+    // newLine: /--\s*/gi
   }
 
   function update (e) {
@@ -26,6 +30,9 @@ import {onMounted, ref} from "vue";
     const value = e?.target?.innerText || editorRef.value?.innerText
 
     preview.value = value
+      .replace(/\u00a0/g, " ")
+      // .replace(patterns.newLine, "<br>")
+      .replace(patterns.quote, '<div class="quote">$2</div>') // quote
       .replace(patterns.h1, '<h1>$2</h1>') // heading 1
       .replace(patterns.h2, '<h2>$2</h2>') // heading 2
       .replace(patterns.h3, '<h3>$2</h3>') // heading 3
@@ -38,6 +45,9 @@ import {onMounted, ref} from "vue";
       .replace(patterns.lineThrough, '<s>$3</s>') // line through
       .replace(patterns.url, '<a href="$5" target="_blank">$3</a>') // URL
       .replace(patterns.img, '<img src="$3" title="$7" alt="$1" width="$9" height="$10" />') // img
+      .replace(patterns.line, '<div class="line"></div>') // img
+      .replace(patterns.code, '<pre>$2</pre>').replace(/`{3}( )*`{3}/g, ' ') // code
+
   }
 
   onMounted(() => update())
@@ -48,7 +58,7 @@ import {onMounted, ref} from "vue";
 <template>
   <div class="markdown">
 
-    <div ref="editorRef" class="editor" spellcheck="true" contenteditable="true" @input="update">
+    <div ref="editorRef" class="editor" spellcheck="true" contenteditable="true" @input.prevent="update">
       # heading 1 <br><br>
       ## heading 2 <br><br>
       ### heading 3 <br><br>
@@ -69,6 +79,25 @@ import {onMounted, ref} from "vue";
 
       <p>[Click Here](https://www.google.com)</p>
 
+
+      ><br>
+      dsdsd
+      ddsd __sdsdsdsdsdsds__ dsdsdsdsds\
+      dsds
+
+      [Click Here](https://www.google.com)<br>
+      >
+
+      <br><br>
+      <br><br>
+
+      ```<br>
+      const age = 30;<br>
+      console.log(age)<br>
+      ```
+
+      <br><br>
+      <br><br>
     </div>
 
     <div class="preview" v-html="preview"></div>
@@ -77,14 +106,15 @@ import {onMounted, ref} from "vue";
 </template>
 
 
-<style lang="scss" scoped>
+<style lang="scss">
 .markdown {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   height: 100vh;
   width: 100vw;
-  font-family: CairoRgularFont, sans-serif;
+  //font-family: CairoRgularFont, sans-serif;
+  font-family: sans-serif;
 
   @media (max-width: 767px) {
     flex-direction: column;
@@ -106,8 +136,8 @@ import {onMounted, ref} from "vue";
     padding-top: 80px !important;
 
     caret-color: #abb2bf;
-    font-size: 20px;
-    line-height: 1.4;
+    //font-size: 20px;
+    //line-height: 1.4;
 
     @media (max-width: 767px) {
       width: 100%;
@@ -128,11 +158,33 @@ import {onMounted, ref} from "vue";
     padding: 50px 20px;
     padding-top: 80px !important;
 
-    font-size: 20px;
-    line-height: 1.4;
 
     @media (max-width: 767px) {
       width: 100%;
+    }
+
+    .line {
+      margin: 20px 0;
+      height: 8px;
+      background-color: #e7e7e7;
+    }
+
+    .quote {
+      border-left: 5px solid #34495E;
+      padding: 16px;
+      width: auto;
+      display: block;
+      margin: 12px 0;
+    }
+
+    pre {
+      background-color: #ECF0F1;
+      border-radius: 4px;
+      padding: 12px;
+      width: auto;
+      display: block;
+      margin: 12px 0;
+      line-height: .8;
     }
 
   }
