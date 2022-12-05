@@ -1,10 +1,28 @@
 
 <script setup>
 
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
+
+  import NewNoteIcon from "@/components/shared/icons/NewNoteIcon.vue";
+  import MenuIcon from "@/components/shared/icons/MenuIcon.vue";
+  import SlideShowIcon from "@/components/shared/icons/SlideShowIcon.vue";
+  import EditorIcon from "@/components/shared/icons/EditorIcon.vue";
 
   const editorRef = ref('')
   const preview = ref('')
+
+  const notes = ref([])
+  const sidebarNotes = computed(() => {
+    return notes.value.map(el => {
+      return {
+        title: 'Title',
+        description: 'description'
+      }
+    })
+  })
+  const selectedNote = ref({})
+  const isEditorActive = ref(false)
+
 
   const patterns = {
     h1: /^(# )(.*$)/gim,
@@ -20,34 +38,51 @@ import {onMounted, ref} from "vue";
     url: /((\[(.*)\])(\(((https?:\/\/)(www\.)?([\w+\-_\.?]+)([^\W_]+)([\/\w\-?]*)(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)\)))/gi,
     img: /!\[(.*)\](\(((https?:\/\/)[www\.]?[\w+\-_\.?]+[^\W_]+[\/\w\-?]*(\?[\w+\-_\.]+\=[\w+\-_\.&?=]+)?)(\s+"(.*)")?(\s+=(\d+)x(\d+))?\))/ig,
     line: /(-{3,})/gi,
-    code: /`{3}([\S]*)?\n([\s\S]+)\n`{3}/gi,
-    quote: />([\S]*)?\n([\s\S]+)\n>/gi,
+    // code: /`{3}([\S]*)?\n([\s\S]+)\n`{3}/gi,
+    // quote: />([\S]*)?\n([\s\S]+)\n>/gi,
+    code: /`{3}([\S]*)?\n([\s\S]+?)\n`{3}/gi,
+    quote: />([\S]*)?\n([\s\S]+?)\n>/gi,
     // newLine: /--\s*/gi
+  }
+
+  function markdown (str = '') {
+    return str
+        .replace(/\u00a0/g, " ")
+        // .replace(patterns.newLine, "<br>")
+        .replace(patterns.quote, '<div class="quote">$2</div>') // quote
+        .replace(patterns.h1, '<h1>$2</h1>') // heading 1
+        .replace(patterns.h2, '<h2>$2</h2>') // heading 2
+        .replace(patterns.h3, '<h3>$2</h3>') // heading 3
+        .replace(patterns.h4, '<h4>$2</h4>') // heading 4
+        .replace(patterns.h5, '<h5>$2</h5>') // heading 5
+        .replace(patterns.h6, '<h6>$2</h6>') // heading 6
+        .replace(patterns.paragraph, '<p>$1</p>') // paragraph
+        .replace(patterns.bold, '<b>$3</b>') // bold
+        .replace(patterns.italic, '<i>$3</i>') // italic
+        .replace(patterns.lineThrough, '<s>$3</s>') // line through
+        .replace(patterns.url, '<a href="$5" target="_blank">$3</a>') // URL
+        .replace(patterns.img, '<img src="$3" title="$7" alt="$1" width="$9" height="$10" />') // img
+        .replace(patterns.line, '<div class="line"></div>') // img
+        .replace(patterns.code, '<pre>$2</pre>').replace(/`{3}( )*`{3}/g, ' ') // code
   }
 
   function update (e) {
 
     const value = e?.target?.innerText || editorRef.value?.innerText
 
-    preview.value = value
-      .replace(/\u00a0/g, " ")
-      // .replace(patterns.newLine, "<br>")
-      .replace(patterns.quote, '<div class="quote">$2</div>') // quote
-      .replace(patterns.h1, '<h1>$2</h1>') // heading 1
-      .replace(patterns.h2, '<h2>$2</h2>') // heading 2
-      .replace(patterns.h3, '<h3>$2</h3>') // heading 3
-      .replace(patterns.h4, '<h4>$2</h4>') // heading 4
-      .replace(patterns.h5, '<h5>$2</h5>') // heading 5
-      .replace(patterns.h6, '<h6>$2</h6>') // heading 6
-      .replace(patterns.paragraph, '<p>$1</p>') // paragraph
-      .replace(patterns.bold, '<b>$3</b>') // bold
-      .replace(patterns.italic, '<i>$3</i>') // italic
-      .replace(patterns.lineThrough, '<s>$3</s>') // line through
-      .replace(patterns.url, '<a href="$5" target="_blank">$3</a>') // URL
-      .replace(patterns.img, '<img src="$3" title="$7" alt="$1" width="$9" height="$10" />') // img
-      .replace(patterns.line, '<div class="line"></div>') // img
-      .replace(patterns.code, '<pre>$2</pre>').replace(/`{3}( )*`{3}/g, ' ') // code
 
+
+    preview.value = markdown(value)
+  }
+
+  function newNote () {
+
+
+    notes.value.push({
+      id: Math.random().toString(36).substring(2, 9),
+      text: ''
+    })
+    isEditorActive.value = true
   }
 
   onMounted(() => update())
@@ -58,137 +93,52 @@ import {onMounted, ref} from "vue";
 <template>
   <div class="markdown">
 
-    <div ref="editorRef" class="editor" spellcheck="true" contenteditable="true" @input.prevent="update">
-      # heading 1 <br><br>
-      ## heading 2 <br><br>
-      ### heading 3 <br><br>
-      #### heading 4 <br><br>
-      ##### heading 5 <br><br>
-      ###### heading 6 <br><br>
+    <div class="all-notes">
+      <div class="actions">
+        <MenuIcon />
+        <span>All Notes</span>
+        <NewNoteIcon @click="newNote" />
+      </div>
 
-      <br>
-      ![dsdsds](https://images.unsplash.com/photo-1669742602422-43d2d8764ee9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=986&q=80      "dsds"      =300x300)
-      <br>
-
-
-      <br><br>
-      <p>My ~~name~~ is _Ahmed_ **Refaat**, Try now :)</p>
-
-      <br><br>
-      <br><br>
-
-      <p>[Click Here](https://www.google.com)</p>
-
-
-      ><br>
-      dsdsd
-      ddsd __sdsdsdsdsdsds__ dsdsdsdsds\
-      dsds
-
-      [Click Here](https://www.google.com)<br>
-      >
-
-      <br><br>
-      <br><br>
-
-      ```<br>
-      const age = 30;<br>
-      console.log(age)<br>
-      ```
-
-      <br><br>
-      <br><br>
+      <div class="notes">
+        <template v-if="sidebarNotes.length">
+          <div class="note" v-for="note in sidebarNotes" :key="note.id">
+            <p>{{ note.title }}</p>
+            <span>{{ note.description }}</span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="new-note" @click="newNote">
+            <EditorIcon />
+            <p>Create a note</p>
+          </div>
+        </template>
+      </div>
     </div>
 
-    <div class="preview" v-html="preview"></div>
+    <div class="selected-note">
+      <template v-if="isEditorActive">
+        <div
+            ref="editorRef"
+            class="editor overflow-scroll-y"
+            spellcheck="true"
+            contenteditable="true"
+            @input.prevent="update"></div>
+        <div class="preview overflow-scroll-y" v-html="preview"></div>
+      </template>
+      <template v-else>
+        <div class="no-notes">
+          <SlideShowIcon />
+<!--          <p>Please add new note...</p>-->
+        </div>
+      </template>
+    </div>
+
 
   </div>
 </template>
 
 
 <style lang="scss">
-.markdown {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-  //font-family: CairoRgularFont, sans-serif;
-  font-family: sans-serif;
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-  }
-
-
-  .editor {
-    outline: none;
-    border: none;
-
-    height: 100%;
-    width: 50vw;
-
-
-    background-color: #1e2126;
-    color: #abb2bf;
-
-    padding: 50px 20px;
-    padding-top: 80px !important;
-
-    caret-color: #abb2bf;
-    //font-size: 20px;
-    //line-height: 1.4;
-
-    @media (max-width: 767px) {
-      width: 100%;
-    }
-
-  }
-
-  .preview {
-    outline: none;
-    border: none;
-
-    height: 100%;
-    width: 50vw;
-
-    //background-color: #1e2126;
-    color: #1e2126;;
-
-    padding: 50px 20px;
-    padding-top: 80px !important;
-
-
-    @media (max-width: 767px) {
-      width: 100%;
-    }
-
-    .line {
-      margin: 20px 0;
-      height: 8px;
-      background-color: #e7e7e7;
-    }
-
-    .quote {
-      border-left: 5px solid #34495E;
-      padding: 16px;
-      width: auto;
-      display: block;
-      margin: 12px 0;
-    }
-
-    pre {
-      background-color: #ECF0F1;
-      border-radius: 4px;
-      padding: 12px;
-      width: auto;
-      display: block;
-      margin: 12px 0;
-      line-height: .8;
-    }
-
-  }
-}
-
-
+@import "style.scss";
 </style>
