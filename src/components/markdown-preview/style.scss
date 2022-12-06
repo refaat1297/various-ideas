@@ -7,9 +7,21 @@
   display: grid;
   font-family: -apple-system, sans-serif;
   grid-template-columns: 400px 1fr;
+  transition: all .4s ease-in-out;
+
+  @media (max-width: 991px) {
+    grid-template-columns: 0 1fr;
+  }
 
   .all-notes {
     border-right: 1px solid rgba(#8c8f94, .2);
+
+
+    @media (max-width: 991px) {
+      border: none;
+    }
+
+
 
     .actions {
       user-select: none;
@@ -19,6 +31,13 @@
       align-items: center;
       border-bottom: 1px solid rgba(#8c8f94, .2);
 
+      transition: all .5s ease-in-out;
+
+      @media (max-width: 991px) {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
       svg {
         fill: #8c8f94;
         cursor: pointer;
@@ -26,6 +45,12 @@
 
       span {
         color: #fff;
+        transition: all .3s ease-in-out;
+
+        @media (max-width: 991px) {
+          display: none;
+        }
+
       }
     }
 

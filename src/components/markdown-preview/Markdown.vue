@@ -1,12 +1,46 @@
 
 <script setup>
 
-import {computed, onMounted, ref} from "vue";
+  import {computed, onMounted, ref} from "vue";
+  import {collection, addDoc, getDocs} from 'firebase/firestore'
+  import {db} from "@/services/firebase.js";
 
   import NewNoteIcon from "@/components/shared/icons/NewNoteIcon.vue";
   import MenuIcon from "@/components/shared/icons/MenuIcon.vue";
   import SlideShowIcon from "@/components/shared/icons/SlideShowIcon.vue";
   import EditorIcon from "@/components/shared/icons/EditorIcon.vue";
+  import CreateNoteModal from './create-note-modal/Index.vue'
+
+
+
+
+
+  // Create New Note
+
+  const isModalOpened = ref(false)
+
+  function toggleModal () {
+    isModalOpened.value = !isModalOpened.value
+  }
+
+
+
+  async function newNote () {
+
+    const {id} = await addDoc(collection(db, "markdowns"), {});
+
+    notes.value.push({
+      id,
+      text: ''
+    })
+    isEditorActive.value = true
+  }
+
+
+  // Create New Note
+
+
+
 
   const editorRef = ref('')
   const preview = ref('')
@@ -67,37 +101,39 @@ import {computed, onMounted, ref} from "vue";
   }
 
   function update (e) {
-
     const value = e?.target?.innerText || editorRef.value?.innerText
-
-
-
     preview.value = markdown(value)
   }
 
-  function newNote () {
 
-
-    notes.value.push({
-      id: Math.random().toString(36).substring(2, 9),
-      text: ''
-    })
-    isEditorActive.value = true
+  async function getNotes () {
+    const querySnapshot = await getDocs(collection(db, "markdowns"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+    });
   }
 
-  onMounted(() => update())
+  onMounted(() => {
+    getNotes()
+  })
 
 
 </script>
 
 <template>
-  <div class="markdown">
+  <CreateNoteModal
+      :is-opened="isModalOpened"
+      @close="toggleModal"
+  >
+    hello
+  </CreateNoteModal>
 
+  <div class="markdown">
     <div class="all-notes">
       <div class="actions">
         <MenuIcon />
         <span>All Notes</span>
-        <NewNoteIcon @click="newNote" />
+        <NewNoteIcon @click="toggleModal" />
       </div>
 
       <div class="notes">
