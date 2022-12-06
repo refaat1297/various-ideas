@@ -2,7 +2,7 @@
 <script setup>
 
   import {computed, onMounted, ref} from "vue";
-  import {collection, addDoc, getDocs} from 'firebase/firestore'
+  import {collection, addDoc, getDocs, serverTimestamp} from 'firebase/firestore'
   import {db} from "@/services/firebase.js";
 
   import NewNoteIcon from "@/components/shared/icons/NewNoteIcon.vue";
@@ -15,29 +15,48 @@
 
 
 
-  // Create New Note
+  // Notes
 
   const isModalOpened = ref(false)
+  const title = ref('')
+  const description = ref('')
+  const notes = ref([])
 
   function toggleModal () {
     isModalOpened.value = !isModalOpened.value
   }
 
+  async function getNotes () {
+    const querySnapshot = await getDocs(collection(db, "markdowns"));
+    querySnapshot.forEach((doc) => {
+      notes.value.push({
+        id: doc.id,
+        ...doc.data()
+      })
+    });
+  }
 
+  async function createNote () {
 
-  async function newNote () {
+    if (!title.value || !description.value) return
 
-    const {id} = await addDoc(collection(db, "markdowns"), {});
+    const docRef = await addDoc(collection(db, "markdowns"), {
+      title: title.value,
+      description: description.value,
+      content: '',
+      createdAt: serverTimestamp()
+    });
 
-    notes.value.push({
-      id,
-      text: ''
-    })
-    isEditorActive.value = true
+    console.log('docRef', docRef)
+
+    toggleModal()
+
+    await getNotes()
+
   }
 
 
-  // Create New Note
+  // Notes
 
 
 
@@ -45,15 +64,6 @@
   const editorRef = ref('')
   const preview = ref('')
 
-  const notes = ref([])
-  const sidebarNotes = computed(() => {
-    return notes.value.map(el => {
-      return {
-        title: 'Title',
-        description: 'description'
-      }
-    })
-  })
   const selectedNote = ref({})
   const isEditorActive = ref(false)
 
@@ -106,12 +116,6 @@
   }
 
 
-  async function getNotes () {
-    const querySnapshot = await getDocs(collection(db, "markdowns"));
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-    });
-  }
 
   onMounted(() => {
     getNotes()
@@ -125,7 +129,19 @@
       :is-opened="isModalOpened"
       @close="toggleModal"
   >
-    hello
+    <div class="new-note-from">
+      <div class="form-input">
+        <label for="title">Title</label>
+        <input id="title" type="text" v-model="title">
+      </div>
+
+      <div class="form-input">
+        <label for="description">Description</label>
+        <input id="description" type="text" v-model="description">
+      </div>
+
+      <button @click="createNote">Create</button>
+    </div>
   </CreateNoteModal>
 
   <div class="markdown">
@@ -137,14 +153,14 @@
       </div>
 
       <div class="notes">
-        <template v-if="sidebarNotes.length">
-          <div class="note" v-for="note in sidebarNotes" :key="note.id">
+        <template v-if="notes.length">
+          <div class="note" v-for="note in notes" :key="note.id">
             <p>{{ note.title }}</p>
             <span>{{ note.description }}</span>
           </div>
         </template>
         <template v-else>
-          <div class="new-note" @click="newNote">
+          <div class="new-note" @click="isModalOpened = true">
             <EditorIcon />
             <p>Create a note</p>
           </div>
