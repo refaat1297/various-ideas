@@ -69,16 +69,19 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    min-width: 400px;
-    width: auto;
+    width: max-content;
     padding: 26px 20px;
     border-radius: 12px;
     background-color: #37353b;
     color: #f9f9f9;
     opacity: 0;
     visibility: hidden;
-    transition: .4s ease-in-out;
+    transition: all .4s ease-in-out;
     font-family: -apple-system, sans-serif;
+
+    @media (max-width: 767px) {
+      min-width: 96%;
+    }
   }
 }
 
