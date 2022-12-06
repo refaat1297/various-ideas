@@ -1,8 +1,8 @@
 
 <script setup>
 
-  import {computed, onMounted, ref} from "vue";
-  import {collection, addDoc, getDocs, serverTimestamp} from 'firebase/firestore'
+  import {onMounted, ref} from "vue";
+  import {collection, addDoc, getDocs, serverTimestamp, query, orderBy} from 'firebase/firestore'
   import {db} from "@/services/firebase.js";
 
   import NewNoteIcon from "@/components/shared/icons/NewNoteIcon.vue";
@@ -27,7 +27,9 @@
   }
 
   async function getNotes () {
-    const querySnapshot = await getDocs(collection(db, "markdowns"));
+    notes.value = []
+    const q = query(collection(db, "markdowns"), orderBy('createdAt', 'asc'))
+    const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       notes.value.push({
         id: doc.id,
@@ -178,10 +180,10 @@
             @input.prevent="update"></div>
         <div class="preview overflow-scroll-y" v-html="preview"></div>
       </template>
+
       <template v-else>
         <div class="no-notes">
           <SlideShowIcon />
-<!--          <p>Please add new note...</p>-->
         </div>
       </template>
     </div>
