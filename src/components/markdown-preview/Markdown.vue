@@ -2,7 +2,7 @@
 <script setup>
 
   import {onMounted, ref} from "vue";
-  import {collection, addDoc, getDocs, serverTimestamp, query, orderBy} from 'firebase/firestore'
+  import {collection, addDoc, getDocs, serverTimestamp, query, orderBy, doc, updateDoc} from 'firebase/firestore'
   import {db} from "@/services/firebase.js";
 
   import NewNoteIcon from "@/components/shared/icons/NewNoteIcon.vue";
@@ -10,6 +10,8 @@
   import SlideShowIcon from "@/components/shared/icons/SlideShowIcon.vue";
   import EditorIcon from "@/components/shared/icons/EditorIcon.vue";
   import CreateNoteModal from './create-note-modal/Index.vue'
+  import TrashIcon from "@/components/shared/icons/TrashIcon.vue";
+  import FolderOpenIcon from "@/components/shared/icons/FolderOpenIcon.vue";
 
 
 
@@ -18,16 +20,23 @@
   // Notes
 
   const isModalOpened = ref(false)
+  const isNotesListOpened = ref(true)
   const title = ref('')
   const description = ref('')
   const notes = ref([])
+  const selectedNote = ref({})
+  const preview = ref('')
 
   function toggleModal () {
     isModalOpened.value = !isModalOpened.value
   }
 
+  function toggleNotesList () {
+    isNotesListOpened.value = !isNotesListOpened.value
+    isEditorActive.value = !isEditorActive.value
+  }
+
   async function getNotes () {
-    notes.value = []
     const q = query(collection(db, "markdowns"), orderBy('createdAt', 'asc'))
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -39,7 +48,6 @@
   }
 
   async function createNote () {
-
     if (!title.value || !description.value) return
 
     const docRef = await addDoc(collection(db, "markdowns"), {
@@ -49,26 +57,29 @@
       createdAt: serverTimestamp()
     });
 
-    console.log('docRef', docRef)
+    notes.value.push({
+      id: docRef.id,
+      title: title.value,
+      description: description.value,
+      content: '',
+    })
 
     toggleModal()
-
-    await getNotes()
-
   }
 
+  function openNote (id) {
+    selectedNote.value = notes.value.find(el => el.id === id)
+    isEditorActive.value = true
+    isNotesListOpened.value = false
+    update()
+  }
 
   // Notes
 
 
 
 
-  const editorRef = ref('')
-  const preview = ref('')
-
-  const selectedNote = ref({})
   const isEditorActive = ref(false)
-
 
   const patterns = {
     h1: /^(# )(.*$)/gim,
@@ -88,13 +99,13 @@
     // quote: />([\S]*)?\n([\s\S]+)\n>/gi,
     code: /`{3}([\S]*)?\n([\s\S]+?)\n`{3}/gi,
     quote: />([\S]*)?\n([\s\S]+?)\n>/gi,
-    // newLine: /--\s*/gi
+    newLine: /\n/gim
   }
 
   function markdown (str = '') {
     return str
         .replace(/\u00a0/g, " ")
-        // .replace(patterns.newLine, "<br>")
+        // .replace(patterns.newLine, "<br />")
         .replace(patterns.quote, '<div class="quote">$2</div>') // quote
         .replace(patterns.h1, '<h1>$2</h1>') // heading 1
         .replace(patterns.h2, '<h2>$2</h2>') // heading 2
@@ -112,9 +123,14 @@
         .replace(patterns.code, '<pre>$2</pre>').replace(/`{3}( )*`{3}/g, ' ') // code
   }
 
-  function update (e) {
-    const value = e?.target?.innerText || editorRef.value?.innerText
-    preview.value = markdown(value)
+  function update () {
+    const markdownRef = doc(db, "markdowns", selectedNote.value.id);
+
+    updateDoc(markdownRef, {
+      content: selectedNote.value.content
+    });
+
+    preview.value = markdown(selectedNote.value.content)
   }
 
 
@@ -146,8 +162,8 @@
     </div>
   </CreateNoteModal>
 
-  <div class="markdown">
-    <div class="all-notes">
+  <div class="markdown" >
+    <div class="all-notes" :class="{'opened': isNotesListOpened}">
       <div class="actions">
         <MenuIcon />
         <span>All Notes</span>
@@ -156,38 +172,40 @@
 
       <div class="notes">
         <template v-if="notes.length">
-          <div class="note" v-for="note in notes" :key="note.id">
+          <div class="note" v-for="note in notes" :key="note.id" @click="openNote(note.id)">
             <p>{{ note.title }}</p>
             <span>{{ note.description }}</span>
           </div>
         </template>
         <template v-else>
-          <div class="new-note" @click="isModalOpened = true">
-            <EditorIcon />
-            <p>Create a note</p>
+          <div class="new-note">
+            <EditorIcon @click="isModalOpened = true" />
+            <p @click="isModalOpened = true">Create a note</p>
           </div>
         </template>
       </div>
     </div>
 
     <div class="selected-note">
+      <div class="controls">
+        <div class="open-notes">
+          <FolderOpenIcon @click="toggleNotesList" />
+        </div>
+        <div v-if="isEditorActive">
+          <TrashIcon class="trash" />
+        </div>
+      </div>
       <template v-if="isEditorActive">
-        <div
-            ref="editorRef"
-            class="editor overflow-scroll-y"
-            spellcheck="true"
-            contenteditable="true"
-            @input.prevent="update"></div>
+        <textarea class="editor" v-model="selectedNote.content" @input="update"></textarea>
         <div class="preview overflow-scroll-y" v-html="preview"></div>
       </template>
 
-      <template v-else>
+      <template v-if="!isEditorActive">
         <div class="no-notes">
           <SlideShowIcon />
         </div>
       </template>
     </div>
-
 
   </div>
 </template>

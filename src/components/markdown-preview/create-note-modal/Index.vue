@@ -27,6 +27,8 @@
 
 <style lang="scss" scoped>
 .modal {
+  position: relative;
+  z-index: 100;
   .overlay {
     position: fixed;
     top: 0;
