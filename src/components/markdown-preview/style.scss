@@ -1,45 +1,47 @@
-
-
-
 .markdown {
-  //#8c8f94
-  //background-color: #2c3338;
   background-color: #1d2327;
   height: 100vh;
   overflow: hidden;
   display: grid;
   font-family: -apple-system, sans-serif;
   grid-template-columns: 400px 1fr;
-  transition: all .4s ease-in-out;
+  transition: all .1s ease-in-out;
 
   @media (max-width: 991px) {
-    grid-template-columns: 0 1fr;
+    display: block;
   }
-
   .all-notes {
     border-right: 1px solid rgba(#8c8f94, .2);
-
+    background-color: #1d2327;
 
     @media (max-width: 991px) {
       border: none;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: -100vw;
+      width: 100vw;
+      height: 100vh;
+      transition: all .2s ease-in-out;
+    }
+
+    &.opened {
+      @media (max-width: 991px) {
+        left: 0;
+      }
     }
 
 
 
     .actions {
+      height: 50px;
       user-select: none;
       padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid rgba(#8c8f94, .2);
-
-      transition: all .5s ease-in-out;
-
-      @media (max-width: 991px) {
-        padding-left: 0;
-        padding-right: 0;
-      }
+      transition: all .1s ease-in-out;
 
       svg {
         fill: #8c8f94;
@@ -48,7 +50,7 @@
 
       span {
         color: #fff;
-        transition: all .3s ease-in-out;
+        transition: all .1s ease-in-out;
 
         @media (max-width: 991px) {
           display: none;
@@ -88,7 +90,7 @@
       .note {
         padding: 16px 20px;
         cursor: pointer;
-        transition: all .2s ease-in-out;
+        transition: all .1s ease-in-out;
 
         &:not(:last-of-type) {
           border-bottom: 1px solid rgba(#8c8f94, .2);
@@ -115,13 +117,46 @@
   .selected-note {
     height: 100vh;
 
+    .controls {
+      padding: 12px 20px;
+      height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(#8c8f94, .2);
+
+      svg {
+        fill: #8c8f94;
+        cursor: pointer;
+
+        &.trash {
+          fill: #ff8085;
+        }
+      }
+
+      .open-notes {
+        opacity: 0;
+        visibility: hidden;
+        @media (max-width: 991px) {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+    }
+
     .editor {
       height: 40%;
       outline: none;
+      border: none;
       border-bottom: 1px solid rgba(#8c8f94, .2);
       color: #fff;
       padding: 18px 20px;
       font-size: 16px;
+      background-color: inherit;
+      font-family: -apple-system, sans-serif;
+      width: 100%;
+      display: block;
+
 
       &:focus {
         border-bottom: 1px solid rgba(#8c8f94, .2);
