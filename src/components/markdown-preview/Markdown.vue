@@ -2,7 +2,7 @@
 <script setup>
 
   import {onMounted, ref} from "vue";
-  import {collection, addDoc, getDocs, serverTimestamp, query, orderBy, doc, updateDoc} from 'firebase/firestore'
+  import {collection, addDoc, getDocs, serverTimestamp, query, orderBy, doc, updateDoc, deleteDoc} from 'firebase/firestore'
   import {db} from "@/services/firebase.js";
 
   import NewNoteIcon from "@/components/shared/icons/NewNoteIcon.vue";
@@ -21,6 +21,7 @@
 
   const isModalOpened = ref(false)
   const isNotesListOpened = ref(true)
+  const isLoadingNotes = ref(false)
   const title = ref('')
   const description = ref('')
   const notes = ref([])
@@ -37,6 +38,7 @@
   }
 
   async function getNotes () {
+    isLoadingNotes.value = true
     const q = query(collection(db, "markdowns"), orderBy('createdAt', 'asc'))
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -45,6 +47,7 @@
         ...doc.data()
       })
     });
+    isLoadingNotes.value = false
   }
 
   async function createNote () {
@@ -64,6 +67,9 @@
       content: '',
     })
 
+    title.value = ''
+    description.value = ''
+
     toggleModal()
   }
 
@@ -72,6 +78,14 @@
     isEditorActive.value = true
     isNotesListOpened.value = false
     update()
+  }
+
+  async function deleteNote () {
+    await deleteDoc(doc(db, "markdowns", selectedNote.value.id));
+    notes.value = notes.value.filter(el => el.id !== selectedNote.value.id)
+
+    isEditorActive.value = false
+    isNotesListOpened.value = true
   }
 
   // Notes
@@ -192,7 +206,7 @@
           <FolderOpenIcon @click="toggleNotesList" />
         </div>
         <div v-if="isEditorActive">
-          <TrashIcon class="trash" />
+          <TrashIcon class="trash" @click="deleteNote" />
         </div>
       </div>
       <template v-if="isEditorActive">
