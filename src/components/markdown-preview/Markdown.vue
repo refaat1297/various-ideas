@@ -119,6 +119,7 @@
   function markdown (str = '') {
     return str
         .replace(/\u00a0/g, " ")
+        .replace(patterns.paragraph, '<p>$1</p>') // paragraph
         // .replace(patterns.newLine, "<br />")
         .replace(patterns.quote, '<div class="quote">$2</div>') // quote
         .replace(patterns.h1, '<h1>$2</h1>') // heading 1
@@ -127,14 +128,13 @@
         .replace(patterns.h4, '<h4>$2</h4>') // heading 4
         .replace(patterns.h5, '<h5>$2</h5>') // heading 5
         .replace(patterns.h6, '<h6>$2</h6>') // heading 6
-        .replace(patterns.paragraph, '<p>$1</p>') // paragraph
         .replace(patterns.bold, '<b>$3</b>') // bold
         .replace(patterns.italic, '<i>$3</i>') // italic
         .replace(patterns.lineThrough, '<s>$3</s>') // line through
         .replace(patterns.url, '<a href="$5" target="_blank">$3</a>') // URL
-        .replace(patterns.img, '<img src="$3" title="$7" alt="$1" width="$9" height="$10" />') // img
+        .replace(patterns.img, '<div class="thumbnail"><img src="$3" title="$7" alt="$1" width="$9" height="$10" /></div>') // img
         .replace(patterns.line, '<div class="line"></div>') // img
-        .replace(patterns.code, '<pre>$2</pre>').replace(/`{3}( )*`{3}/g, ' ') // code
+        .replace(patterns.code, '<pre class="code"><code>$2</code></pre>').replace(/`{3}( )*`{3}/g, ' ') // code
   }
 
   function update () {
